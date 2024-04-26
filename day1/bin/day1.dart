@@ -1,61 +1,29 @@
-import 'package:args/args.dart';
-
-const String version = '0.0.1';
-
-ArgParser buildParser() {
-  return ArgParser()
-    ..addFlag(
-      'help',
-      abbr: 'h',
-      negatable: false,
-      help: 'Print this usage information.',
-    )
-    ..addFlag(
-      'verbose',
-      abbr: 'v',
-      negatable: false,
-      help: 'Show additional command output.',
-    )
-    ..addFlag(
-      'version',
-      negatable: false,
-      help: 'Print the tool version.',
-    );
-}
-
-void printUsage(ArgParser argParser) {
-  print('Usage: dart day1.dart <flags> [arguments]');
-  print(argParser.usage);
-}
+import 'dart:io';
 
 void main(List<String> arguments) {
-  final ArgParser argParser = buildParser();
-  try {
-    final ArgResults results = argParser.parse(arguments);
-    bool verbose = false;
-
-    // Process the parsed arguments.
-    if (results.wasParsed('help')) {
-      printUsage(argParser);
-      return;
-    }
-    if (results.wasParsed('version')) {
-      print('day1 version: $version');
-      return;
-    }
-    if (results.wasParsed('verbose')) {
-      verbose = true;
-    }
-
-    // Act on the arguments provided.
-    print('Positional arguments: ${results.rest}');
-    if (verbose) {
-      print('[VERBOSE] All arguments: ${results.arguments}');
-    }
-  } on FormatException catch (e) {
-    // Print usage information if an invalid argument was provided.
-    print(e.message);
-    print('');
-    printUsage(argParser);
+  if (arguments.isEmpty) {
+    print('Argument required');
+    return;
   }
+  final f = File(arguments[0]);
+  if (!f.existsSync()) {
+    print('$f doesn\'t exist');
+    return;
+  }
+
+  List<int> values = [];
+  for (final (_, line) in f.readAsStringSync().split('\n').indexed) {
+    final n1 = line.indexOf(RegExp(r'[0-9]'));
+    if (n1 < 0) break;
+    final n2 = line.lastIndexOf(RegExp(r'[0-9]'));
+    final number = int.parse(line[n1] + line[n2]);
+    values.add(number);
+  }
+
+  stdout.write(values.fold<int>(
+    0,
+    (previousValue, element) => previousValue + element,
+  ));
+
+  return;
 }
