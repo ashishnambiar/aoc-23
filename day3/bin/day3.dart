@@ -14,7 +14,9 @@ void main(List<String> arguments) {
 
   final values = <Value>[];
   final chars = <Point<int>>[];
+  final lines = <String>[];
   for (final (y, line) in f.readAsLinesSync().indexed) {
+    lines.add(line);
     final str = StringBuffer();
     Point<int>? start;
 
@@ -49,20 +51,32 @@ void main(List<String> arguments) {
   }
 
 //////////////////////////////////////////////////
+  final ratio = <List<int>>[];
   final indexes = <int>{};
   for (final (_, char) in chars.indexed) {
     Range xrange = (min: char.x - 1, max: char.x + 1);
     Range yrange = (min: char.y - 1, max: char.y + 1);
+    final isStar = lines[char.y][char.x] == "*";
+    final ratioGroup = <int>[];
     for (final (index, val) in values.indexed) {
       if (xrange.near(val.start.x, val.end.x - 1) &&
           yrange.near(val.start.y, val.end.y)) {
         indexes.add(index);
+
+        if (isStar) {
+          ratioGroup.add(val.number);
+        }
       }
     }
+    if (ratioGroup.length == 2) ratio.add(ratioGroup);
   }
 
-  final v = indexes.map((e) => values[e]).fold(0, (p, e) => p + e.number);
-  stdout.write(v);
+  final res =
+      ratio.fold<int>(0, (p, e) => p + (e.fold<int>(1, (p, e) => p * e)));
+  stdout.write(res);
+
+  // final v = indexes.map((e) => values[e]).fold(0, (p, e) => p + e.number);
+  // stdout.write(v);
 }
 
 typedef Range = ({int min, int max});
