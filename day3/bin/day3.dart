@@ -6,16 +6,25 @@ void main(List<String> arguments) {
     print('missing args');
     return;
   }
-
   final f = File(arguments[0]);
   final dot = '.'.runes.first;
   final nums =
-      List.generate(10, (index) => index).fold('', (p, e) => '$p$e').runes;
+      List.generate(35, (index) => index).fold('', (p, e) => '$p$e').runes;
 
   final values = <Value>[];
   final chars = <Point<int>>[];
   final lines = <String>[];
-  for (final (y, line) in f.readAsLinesSync().indexed) {
+
+  final gg = f.readAsLinesSync();
+  final ll = List.generate(1, (index) => gg).fold<List<String>>(
+    [],
+    (p, e) => [
+      ...p,
+      ...e,
+    ],
+  );
+
+  for (final (y, line) in ll.indexed) {
     lines.add(line);
     final str = StringBuffer();
     Point<int>? start;
@@ -49,7 +58,6 @@ void main(List<String> arguments) {
       str.clear();
     }
   }
-
 //////////////////////////////////////////////////
   final ratio = <List<int>>[];
   final indexes = <int>{};
@@ -59,6 +67,8 @@ void main(List<String> arguments) {
     final isStar = lines[char.y][char.x] == "*";
     final ratioGroup = <int>[];
     for (final (index, val) in values.indexed) {
+      if (val.start.y < yrange.min) continue;
+      if (val.start.y > yrange.max) break;
       if (xrange.near(val.start.x, val.end.x - 1) &&
           yrange.near(val.start.y, val.end.y)) {
         indexes.add(index);
