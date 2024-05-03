@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
@@ -13,11 +14,11 @@ void main(List<String> arguments) {
     final right = input[1].split(RegExp(r'\s+')).toSet();
     final left = input[0].split(RegExp(r'\s+')).toSet();
 
-    values.add(
-        left.intersection(right).fold<int>(0, (p, e) => p + (p == 0 ? 1 : p)));
+    values.add(pow(2, (left.intersection(right).length - 1)).toInt());
   }
 
   final res =
       values.fold<int>(0, (previousValue, element) => previousValue + element);
+
   stdout.write(res);
 }
