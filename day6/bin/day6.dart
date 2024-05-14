@@ -10,38 +10,20 @@ void main(List<String> args) {
 
   final file = File(args.first);
 
-  List<int> time = [];
-  List<int> distance = [];
+  int time = 0;
+  int distance = 0;
   for (final line in file.readAsLinesSync()) {
     final s = line.split(':');
     switch (s.first) {
       case 'Time':
-        time = s[1]
-            .split(' ')
-            .where((e) => e.isNotEmpty)
-            .toList()
-            .map((e) => int.parse(e))
-            .toList();
+        time = int.parse(s[1].replaceAll(' ', ''));
       case 'Distance':
-        distance = s[1]
-            .split(' ')
-            .where((e) => e.isNotEmpty)
-            .toList()
-            .map((e) => int.parse(e))
-            .toList();
+        distance = int.parse(s[1].replaceAll(' ', ''));
     }
   }
-  final List<Pair> pairs = [];
-  for (var i = 0; i < time.length; i++) {
-    pairs.add((time: time[i], distance: distance[i]));
-  }
+  Pair pair = (time: time, distance: distance);
 
-  List<int> results = [];
-  for (final pair in pairs) {
-    print('$pair: ${pair.qualifyingNumbers()}');
-    results.add(pair.qualifyingNumbers());
-  }
-  final result = results.reduce((value, element) => value * element);
+  final result = pair.qualifyingNumbers();
 
   stdout.write('$result');
 }
